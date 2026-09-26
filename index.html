@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSON Formatter &amp; Validator — Beautify, Minify, Validate JSON</title>
+<meta name="description" content="Format, validate, minify and explore JSON data online. Syntax highlighting, error detection, tree view. Free JSON formatter.">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,sans-serif;background:#0a0a0a;color:#f0f0f0;min-height:100vh}.hero{text-align:center;padding:40px 20px 20px;background:linear-gradient(180deg,#0a0a1a,#0a0a0a)}.hero h1{font-size:clamp(22px,4vw,36px);font-weight:700;color:#f59e0b;margin-bottom:8px}.hero p{color:#555;font-size:14px}.wrap{max-width:1100px;margin:16px auto;padding:0 20px 40px}.toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.tbtn{padding:8px 16px;border-radius:8px;border:1px solid #222;background:#111;color:#9ca3af;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s}.tbtn:hover{border-color:#f59e0b;color:#f59e0b}.tbtn.primary{background:#f59e0b;color:#000;border-color:#f59e0b}.status{padding:8px 14px;border-radius:8px;font-size:13px;margin-bottom:10px;display:none}.status.ok{background:rgba(16,185,129,.1);border:1px solid #10b981;color:#10b981}.status.err{background:rgba(239,68,68,.08);border:1px solid #ef4444;color:#ef4444}.editors{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.editors{grid-template-columns:1fr}}.ed-panel{background:#111;border:1px solid #222;border-radius:12px;overflow:hidden}.ed-header{background:#0a0a0a;padding:10px 14px;font-size:12px;color:#6b7280;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between}.ed-header span{color:#f0f0f0;font-weight:500}textarea{width:100%;background:#111;color:#a78bfa;font-family:'Courier New',monospace;font-size:13px;line-height:1.6;padding:14px;border:none;outline:none;resize:none;min-height:500px;tab-size:2}.tree{padding:14px;font-family:monospace;font-size:12px;line-height:1.8;min-height:500px;overflow-y:auto;white-space:pre}.key{color:#38bdf8}.str{color:#a3e635}.num{color:#fb923c}.bool{color:#f472b6}.null{color:#94a3b8}.ft{text-align:center;padding:20px;color:#333;font-size:12px}.ft a{color:#f59e0b;text-decoration:none}</style>
+</head><body>
+<div class="hero"><h1>&#x1F4CB; JSON Formatter</h1><p>Format &middot; Validate &middot; Minify &middot; Explore &middot; Convert</p></div>
+<div class="wrap">
+<div class="toolbar">
+<button class="tbtn primary" onclick="format()">&#x2728; Format</button>
+<button class="tbtn" onclick="minify()">&#x26A1; Minify</button>
+<button class="tbtn" onclick="validate()">&#x2705; Validate</button>
+<button class="tbtn" onclick="copy()">&#x1F4CB; Copy</button>
+<button class="tbtn" onclick="clear()">&#x1F5D1; Clear</button>
+<button class="tbtn" onclick="sample()">&#x1F4C4; Sample</button>
+</div>
+<div class="status" id="status"></div>
+<div class="editors">
+<div class="ed-panel">
+<div class="ed-header"><span>Input JSON</span><span id="in-size">0 chars</span></div>
+<textarea id="input" placeholder="Paste your JSON here..." oninput="onInput()"></textarea>
+</div>
+<div class="ed-panel">
+<div class="ed-header"><span>Formatted Output</span><span id="out-size">0 chars</span></div>
+<textarea id="output" readonly placeholder="Formatted JSON appears here..."></textarea>
+</div>
+</div>
+</div>
+<div class="ft">Powered by <a href="https://legion-api.com">LEGION Systems</a> &middot; <a href="https://gemmo.gumroad.com/l/ngtmw">AI API &euro;29/mo</a></div>
+<script>
+function show(msg,type){const s=document.getElementById('status');s.textContent=msg;s.className='status '+type;s.style.display='block';setTimeout(()=>s.style.display='none',3000);}
+function onInput(){const v=document.getElementById('input').value;document.getElementById('in-size').textContent=v.length+' chars';}
+function format(){
+  try{
+    const v=document.getElementById('input').value.trim();
+    if(!v)return;
+    const parsed=JSON.parse(v);
+    const formatted=JSON.stringify(parsed,null,2);
+    document.getElementById('output').value=formatted;
+    document.getElementById('out-size').textContent=formatted.length+' chars';
+    show('Valid JSON — formatted successfully','ok');
+  }catch(e){show('Invalid JSON: '+e.message,'err');}
+}
+function minify(){
+  try{
+    const v=document.getElementById('input').value.trim();
+    if(!v)return;
+    const parsed=JSON.parse(v);
+    const min=JSON.stringify(parsed);
+    document.getElementById('output').value=min;
+    document.getElementById('out-size').textContent=min.length+' chars';
+    show('Minified: '+min.length+' chars','ok');
+  }catch(e){show('Invalid JSON: '+e.message,'err');}
+}
+function validate(){
+  try{
+    const v=document.getElementById('input').value.trim();
+    if(!v){show('Input is empty','err');return;}
+    const parsed=JSON.parse(v);
+    const keys=typeof parsed==='object'&&parsed?Object.keys(parsed).length:0;
+    show('Valid JSON! '+(Array.isArray(parsed)?'Array with '+parsed.length+' items':'Object with '+keys+' keys'),'ok');
+  }catch(e){show('Invalid JSON: '+e.message,'err');}
+}
+function copy(){const v=document.getElementById('output').value||document.getElementById('input').value;if(v)navigator.clipboard.writeText(v).then(()=>show('Copied!','ok'));}
+function clear(){document.getElementById('input').value='';document.getElementById('output').value='';document.getElementById('in-size').textContent='0 chars';document.getElementById('out-size').textContent='0 chars';}
+function sample(){
+  const s={name:"LEGION Systems",version:"2.0",endpoints:125,datasets:74,features:["AI Security","Policy Drift","Price Tracking","Attestation"],stats:{incidents:13555,analyzed:8504,confirmed:1285},active:true};
+  document.getElementById('input').value=JSON.stringify(s,null,2);
+  onInput();format();
+}
+</script></body></html>
